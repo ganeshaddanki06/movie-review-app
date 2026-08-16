@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "https://movie-review-app-wl9m.onrender.com";
+const API_URL = "https://movie-review-app-jvwp.onrender.com";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -164,31 +164,19 @@ function App() {
     })
     .sort((a, b) => {
       if (sortOption === "rating-high") {
-        return (
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
-        );
+        return Number(b.rating || 0) - Number(a.rating || 0);
       }
 
       if (sortOption === "rating-low") {
-        return (
-          Number(a.rating || 0) -
-          Number(b.rating || 0)
-        );
+        return Number(a.rating || 0) - Number(b.rating || 0);
       }
 
       if (sortOption === "year-new") {
-        return (
-          Number(b.year || 0) -
-          Number(a.year || 0)
-        );
+        return Number(b.year || 0) - Number(a.year || 0);
       }
 
       if (sortOption === "year-old") {
-        return (
-          Number(a.year || 0) -
-          Number(b.year || 0)
-        );
+        return Number(a.year || 0) - Number(b.year || 0);
       }
 
       if (sortOption === "title") {
@@ -282,7 +270,9 @@ function App() {
         );
       }
 
-      setReviewMessage("✅ Review added successfully!");
+      setReviewMessage(
+        "✅ Review added successfully!"
+      );
 
       setReviewerName("");
       setRating("");
@@ -290,7 +280,10 @@ function App() {
 
       await fetchReviews();
     } catch (err) {
-      console.error("Review submission error:", err);
+      console.error(
+        "Review submission error:",
+        err
+      );
 
       setReviewMessage(`❌ ${err.message}`);
     }
@@ -425,7 +418,6 @@ function App() {
       {/* NAVBAR */}
 
       <header className="navbar">
-
         <div className="logo">
           🎬 Movie Review App
         </div>
@@ -445,15 +437,12 @@ function App() {
             ➕ Add Movie
           </button>
         </nav>
-
       </header>
 
       {/* HERO */}
 
       <section className="hero" id="home">
-
         <div className="hero-content">
-
           <span className="hero-badge">
             🎬 MOVIE REVIEW PLATFORM
           </span>
@@ -476,9 +465,7 @@ function App() {
           >
             🎥 Explore Movies
           </a>
-
         </div>
-
       </section>
 
       {/* STATS */}
@@ -644,7 +631,9 @@ function App() {
                   placeholder="Write a short movie description..."
                   value={movieDescription}
                   onChange={(e) =>
-                    setMovieDescription(e.target.value)
+                    setMovieDescription(
+                      e.target.value
+                    )
                   }
                 />
               </div>
@@ -727,13 +716,18 @@ function App() {
               setGenreFilter(e.target.value)
             }
           >
+
             {genres.map((genre) => (
-              <option key={genre} value={genre}>
+              <option
+                key={genre}
+                value={genre}
+              >
                 {genre === "All"
                   ? "🎭 All Genres"
                   : genre}
               </option>
             ))}
+
           </select>
 
           <select
@@ -742,6 +736,7 @@ function App() {
               setSortOption(e.target.value)
             }
           >
+
             <option value="default">
               ↕️ Sort By
             </option>
@@ -765,6 +760,7 @@ function App() {
             <option value="title">
               🔤 A → Z
             </option>
+
           </select>
 
         </div>
@@ -909,15 +905,15 @@ function App() {
                           {movie.rating ?? "N/A"}
                         </strong>
 
-                        <small>/ 10</small>
+                        <small>
+                          / 10
+                        </small>
 
                       </div>
 
                       <p className="director">
-
                         🎬 Director:{" "}
                         {movie.director || "N/A"}
-
                       </p>
 
                       <div className="card-footer">
@@ -1018,23 +1014,13 @@ function App() {
               </div>
 
               <div className="modal-rating">
-
                 ⭐ {detailMovie.rating ?? "N/A"}
-
-                <span>
-                  {" "} / 10
-                </span>
-
+                <span> / 10</span>
               </div>
 
               <p>
-
-                <strong>
-                  Director:
-                </strong>{" "}
-
+                <strong>Director:</strong>{" "}
                 {detailMovie.director || "N/A"}
-
               </p>
 
               <div className="description">
@@ -1140,7 +1126,8 @@ function App() {
             <p>
               Reviewing:
               <strong>
-                {" "}{selectedMovie.title}
+                {" "}
+                {selectedMovie.title}
               </strong>
             </p>
 
@@ -1292,7 +1279,9 @@ function App() {
 
           <div className="empty-state">
 
-            <div>💬</div>
+            <div>
+              💬
+            </div>
 
             <h3>
               No reviews yet
@@ -1317,12 +1306,9 @@ function App() {
               >
 
                 <p className="review-movie">
-
                   🎬{" "}
-
                   {review.movie_title ||
                     `Movie #${review.movie_id}`}
-
                 </p>
 
                 <div className="review-card-top">
@@ -1347,7 +1333,6 @@ function App() {
             ))}
 
           </div>
-
         )}
 
       </section>

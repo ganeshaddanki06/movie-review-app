@@ -1,114 +1,56 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://movie-review-app-wl9m.onrender.com";
 
 function App() {
-  // ==========================================
-  // MOVIES & REVIEWS
-  // ==========================================
-
   const [movies, setMovies] = useState([]);
   const [reviews, setReviews] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ==========================================
-  // MOVIE DETAILS
-  // ==========================================
-
   const [detailMovie, setDetailMovie] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-  // ==========================================
-  // REVIEW FORM
-  // ==========================================
-
-  const [selectedMovie, setSelectedMovie] =
-    useState(null);
-
-  const [reviewerName, setReviewerName] =
-    useState("");
-
+  const [reviewerName, setReviewerName] = useState("");
   const [rating, setRating] = useState("");
+  const [reviewText, setReviewText] = useState("");
+  const [reviewMessage, setReviewMessage] = useState("");
 
-  const [reviewText, setReviewText] =
-    useState("");
+  const [showAddMovie, setShowAddMovie] = useState(false);
 
-  const [reviewMessage, setReviewMessage] =
-    useState("");
+  const [movieTitle, setMovieTitle] = useState("");
+  const [movieYear, setMovieYear] = useState("");
+  const [movieGenre, setMovieGenre] = useState("");
+  const [movieRating, setMovieRating] = useState("");
+  const [movieDirector, setMovieDirector] = useState("");
+  const [moviePoster, setMoviePoster] = useState("");
+  const [movieDescription, setMovieDescription] = useState("");
+  const [movieMessage, setMovieMessage] = useState("");
+  const [addingMovie, setAddingMovie] = useState(false);
 
-  // ==========================================
-  // ADD MOVIE FORM
-  // ==========================================
+  const [searchTerm, setSearchTerm] = useState("");
+  const [genreFilter, setGenreFilter] = useState("All");
+  const [sortOption, setSortOption] = useState("default");
 
-  const [showAddMovie, setShowAddMovie] =
-    useState(false);
-
-  const [movieTitle, setMovieTitle] =
-    useState("");
-
-  const [movieYear, setMovieYear] =
-    useState("");
-
-  const [movieGenre, setMovieGenre] =
-    useState("");
-
-  const [movieRating, setMovieRating] =
-    useState("");
-
-  const [movieDirector, setMovieDirector] =
-    useState("");
-
-  const [moviePoster, setMoviePoster] =
-    useState("");
-
-  const [movieDescription, setMovieDescription] =
-    useState("");
-
-  const [movieMessage, setMovieMessage] =
-    useState("");
-
-  const [addingMovie, setAddingMovie] =
-    useState(false);
-
-  // ==========================================
-  // SEARCH / FILTER / SORT
-  // ==========================================
-
-  const [searchTerm, setSearchTerm] =
-    useState("");
-
-  const [genreFilter, setGenreFilter] =
-    useState("All");
-
-  const [sortOption, setSortOption] =
-    useState("default");
-
-  // ==========================================
+  // ===============================
   // FETCH MOVIES
-  // ==========================================
+  // ===============================
 
   const fetchMovies = async () => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${API_URL}/api/movies`
-      );
+      const response = await fetch(`${API_URL}/api/movies`);
 
       if (!response.ok) {
-        throw new Error(
-          "Failed to fetch movies"
-        );
+        throw new Error("Failed to fetch movies");
       }
 
       const data = await response.json();
 
-      console.log(
-        "Movies received:",
-        data
-      );
+      console.log("Movies received:", data);
 
       const movieList = Array.isArray(data)
         ? data
@@ -119,11 +61,7 @@ function App() {
       setMovies(movieList);
       setError("");
     } catch (err) {
-      console.error(
-        "Movie fetch error:",
-        err
-      );
-
+      console.error("Movie fetch error:", err);
       setError(err.message);
       setMovies([]);
     } finally {
@@ -131,28 +69,21 @@ function App() {
     }
   };
 
-  // ==========================================
+  // ===============================
   // FETCH REVIEWS
-  // ==========================================
+  // ===============================
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/reviews`
-      );
+      const response = await fetch(`${API_URL}/api/reviews`);
 
       if (!response.ok) {
-        throw new Error(
-          "Failed to fetch reviews"
-        );
+        throw new Error("Failed to fetch reviews");
       }
 
       const data = await response.json();
 
-      console.log(
-        "Reviews received:",
-        data
-      );
+      console.log("Reviews received:", data);
 
       const reviewList = Array.isArray(data)
         ? data
@@ -162,31 +93,25 @@ function App() {
 
       setReviews(reviewList);
     } catch (err) {
-      console.error(
-        "Review fetch error:",
-        err
-      );
+      console.error("Review fetch error:", err);
     }
   };
 
-  // ==========================================
+  // ===============================
   // INITIAL LOAD
-  // ==========================================
+  // ===============================
 
   useEffect(() => {
     fetchMovies();
     fetchReviews();
   }, []);
 
-  // ==========================================
-  // GET POSTER
-  // ==========================================
+  // ===============================
+  // POSTER
+  // ===============================
 
   const getPoster = (movie) => {
-    if (
-      movie.poster &&
-      movie.poster !== "test.jpg"
-    ) {
+    if (movie.poster && movie.poster !== "test.jpg") {
       return movie.poster;
     }
 
@@ -197,130 +122,97 @@ function App() {
     );
   };
 
-  // ==========================================
-  // GET REVIEWS FOR MOVIE
-  // ==========================================
+  // ===============================
+  // MOVIE REVIEWS
+  // ===============================
 
   const getMovieReviews = (movieId) => {
     return reviews.filter(
-      (review) =>
-        Number(review.movie_id) ===
-        Number(movieId)
+      (review) => Number(review.movie_id) === Number(movieId)
     );
   };
 
-  // ==========================================
+  // ===============================
   // GENRES
-  // ==========================================
+  // ===============================
 
   const genres = [
     "All",
     ...new Set(
-      movies
-        .map((movie) => movie.genre)
-        .filter(Boolean)
+      movies.map((movie) => movie.genre).filter(Boolean)
     ),
   ];
 
-  // ==========================================
-  // SEARCH + FILTER + SORT
-  // ==========================================
+  // ===============================
+  // FILTER + SORT
+  // ===============================
 
   const filteredMovies = movies
     .filter((movie) => {
-      const title =
-        movie.title?.toLowerCase() || "";
-
-      const genre =
-        movie.genre?.toLowerCase() || "";
-
-      const search =
-        searchTerm
-          .toLowerCase()
-          .trim();
+      const title = movie.title?.toLowerCase() || "";
+      const genre = movie.genre?.toLowerCase() || "";
+      const search = searchTerm.toLowerCase().trim();
 
       const matchesSearch =
-        title.includes(search) ||
-        genre.includes(search);
+        title.includes(search) || genre.includes(search);
 
       const matchesGenre =
         genreFilter === "All" ||
         movie.genre === genreFilter;
 
-      return (
-        matchesSearch &&
-        matchesGenre
-      );
+      return matchesSearch && matchesGenre;
     })
     .sort((a, b) => {
-      if (
-        sortOption === "rating-high"
-      ) {
+      if (sortOption === "rating-high") {
         return (
           Number(b.rating || 0) -
           Number(a.rating || 0)
         );
       }
 
-      if (
-        sortOption === "rating-low"
-      ) {
+      if (sortOption === "rating-low") {
         return (
           Number(a.rating || 0) -
           Number(b.rating || 0)
         );
       }
 
-      if (
-        sortOption === "year-new"
-      ) {
+      if (sortOption === "year-new") {
         return (
           Number(b.year || 0) -
           Number(a.year || 0)
         );
       }
 
-      if (
-        sortOption === "year-old"
-      ) {
+      if (sortOption === "year-old") {
         return (
           Number(a.year || 0) -
           Number(b.year || 0)
         );
       }
 
-      if (
-        sortOption === "title"
-      ) {
-        return (
-          a.title || ""
-        ).localeCompare(
-          b.title || ""
-        );
+      if (sortOption === "title") {
+        return (a.title || "").localeCompare(b.title || "");
       }
 
       return 0;
     });
 
-  // ==========================================
-  // OPEN MOVIE DETAILS
-  // ==========================================
+  // ===============================
+  // OPEN DETAILS
+  // ===============================
 
   const openMovieDetails = (movie) => {
     setDetailMovie(movie);
   };
 
-  // ==========================================
-  // CLOSE MOVIE DETAILS
-  // ==========================================
-
   const closeMovieDetails = () => {
     setDetailMovie(null);
   };
 
-  // ==========================================
+  // ===============================
   // OPEN REVIEW FORM
-  // ==========================================
+  // ===============================
 
   const openReviewForm = (movie) => {
     setSelectedMovie(movie);
@@ -333,13 +225,10 @@ function App() {
     setDetailMovie(null);
 
     setTimeout(() => {
-      const reviewSection =
-        document.getElementById(
-          "review-form"
-        );
+      const section = document.getElementById("review-form");
 
-      if (reviewSection) {
-        reviewSection.scrollIntoView({
+      if (section) {
+        section.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
@@ -347,9 +236,9 @@ function App() {
     }, 100);
   };
 
-  // ==========================================
+  // ===============================
   // SUBMIT REVIEW
-  // ==========================================
+  // ===============================
 
   const submitReview = async (e) => {
     e.preventDefault();
@@ -359,18 +248,12 @@ function App() {
       !rating ||
       !reviewText.trim()
     ) {
-      setReviewMessage(
-        "❌ Please fill all fields."
-      );
-
+      setReviewMessage("❌ Please fill all fields.");
       return;
     }
 
     if (!selectedMovie) {
-      setReviewMessage(
-        "❌ Please select a movie."
-      );
-
+      setReviewMessage("❌ Please select a movie.");
       return;
     }
 
@@ -379,40 +262,27 @@ function App() {
         `${API_URL}/api/reviews`,
         {
           method: "POST",
-
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
-            movieId:
-              selectedMovie.id,
-
-            reviewerName:
-              reviewerName.trim(),
-
+            movieId: selectedMovie.id,
+            reviewerName: reviewerName.trim(),
             rating: Number(rating),
-
-            review:
-              reviewText.trim(),
+            review: reviewText.trim(),
           }),
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.message ||
-            "Failed to add review"
+          data.message || "Failed to add review"
         );
       }
 
-      setReviewMessage(
-        "✅ Review added successfully!"
-      );
+      setReviewMessage("✅ Review added successfully!");
 
       setReviewerName("");
       setRating("");
@@ -420,20 +290,15 @@ function App() {
 
       await fetchReviews();
     } catch (err) {
-      console.error(
-        "Review submission error:",
-        err
-      );
+      console.error("Review submission error:", err);
 
-      setReviewMessage(
-        `❌ ${err.message}`
-      );
+      setReviewMessage(`❌ ${err.message}`);
     }
   };
 
-  // ==========================================
+  // ===============================
   // CANCEL REVIEW
-  // ==========================================
+  // ===============================
 
   const cancelReview = () => {
     setSelectedMovie(null);
@@ -443,9 +308,9 @@ function App() {
     setReviewMessage("");
   };
 
-  // ==========================================
+  // ===============================
   // RESET MOVIE FORM
-  // ==========================================
+  // ===============================
 
   const resetMovieForm = () => {
     setMovieTitle("");
@@ -458,9 +323,9 @@ function App() {
     setMovieMessage("");
   };
 
-  // ==========================================
+  // ===============================
   // ADD MOVIE
-  // ==========================================
+  // ===============================
 
   const submitMovie = async (e) => {
     e.preventDefault();
@@ -476,7 +341,6 @@ function App() {
       setMovieMessage(
         "❌ Please fill all required fields."
       );
-
       return;
     }
 
@@ -487,48 +351,32 @@ function App() {
         `${API_URL}/api/movies`,
         {
           method: "POST",
-
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
-            title:
-              movieTitle.trim(),
-
-            year:
-              Number(movieYear),
-
-            genre:
-              movieGenre.trim(),
-
+            title: movieTitle.trim(),
+            year: Number(movieYear),
+            genre: movieGenre.trim(),
             rating:
               movieRating === ""
                 ? 0
                 : Number(movieRating),
-
             poster:
-              moviePoster.trim() ||
-              "test.jpg",
-
+              moviePoster.trim() || "test.jpg",
             description:
               movieDescription.trim() ||
               "No description available.",
-
-            director:
-              movieDirector.trim(),
+            director: movieDirector.trim(),
           }),
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.message ||
-            "Failed to add movie"
+          data.message || "Failed to add movie"
         );
       }
 
@@ -544,210 +392,142 @@ function App() {
         setShowAddMovie(false);
       }, 800);
     } catch (err) {
-      console.error(
-        "Add movie error:",
-        err
-      );
+      console.error("Add movie error:", err);
 
-      setMovieMessage(
-        `❌ ${err.message}`
-      );
+      setMovieMessage(`❌ ${err.message}`);
     } finally {
       setAddingMovie(false);
     }
   };
 
-  // ==========================================
+  // ===============================
   // AVERAGE RATING
-  // ==========================================
+  // ===============================
 
   const averageRating =
     movies.length > 0
       ? (
           movies.reduce(
             (total, movie) =>
-              total +
-              Number(
-                movie.rating || 0
-              ),
+              total + Number(movie.rating || 0),
             0
           ) / movies.length
         ).toFixed(1)
       : "0.0";
 
-  // ==========================================
+  // ===============================
   // PAGE
-  // ==========================================
+  // ===============================
 
   return (
     <div className="app">
 
-      {/* ======================================
-          NAVBAR
-      ====================================== */}
+      {/* NAVBAR */}
 
       <header className="navbar">
 
-        <h1>
+        <div className="logo">
           🎬 Movie Review App
-        </h1>
+        </div>
 
         <nav>
-
-          <a href="#home">
-            Home
-          </a>
-
-          <a href="#movies">
-            Movies
-          </a>
-
-          <a href="#reviews">
-            Reviews
-          </a>
+          <a href="#home">Home</a>
+          <a href="#movies">Movies</a>
+          <a href="#reviews">Reviews</a>
 
           <button
             type="button"
             className="add-movie-nav"
             onClick={() =>
-              setShowAddMovie(
-                !showAddMovie
-              )
+              setShowAddMovie(!showAddMovie)
             }
           >
             ➕ Add Movie
           </button>
-
         </nav>
 
       </header>
 
-      {/* ======================================
-          HERO
-      ====================================== */}
+      {/* HERO */}
 
-      <section
-        className="hero"
-        id="home"
-      >
+      <section className="hero" id="home">
 
-        <h2>
-          Discover Movies & Share Reviews
-        </h2>
+        <div className="hero-content">
 
-        <p>
-          Explore movies, ratings and
-          reviews. Share your opinion
-          and discover what other movie
-          lovers think.
-        </p>
+          <span className="hero-badge">
+            🎬 MOVIE REVIEW PLATFORM
+          </span>
+
+          <h1>
+            Discover Movies &
+            <br />
+            Share Reviews
+          </h1>
+
+          <p>
+            Explore movies, ratings and reviews.
+            Share your opinion and discover what
+            other movie lovers think.
+          </p>
+
+          <a
+            href="#movies"
+            className="hero-button"
+          >
+            🎥 Explore Movies
+          </a>
+
+        </div>
 
       </section>
 
-      {/* ======================================
-          STATS
-      ====================================== */}
+      {/* STATS */}
 
       <section className="stats-section">
 
         <div className="stat-card">
-
-          <span>
-            🎬
-          </span>
-
-          <h3>
-            {movies.length}
-          </h3>
-
-          <p>
-            Total Movies
-          </p>
-
+          <span>🎬</span>
+          <h3>{movies.length}</h3>
+          <p>Total Movies</p>
         </div>
 
         <div className="stat-card">
-
-          <span>
-            ⭐
-          </span>
-
-          <h3>
-            {averageRating}
-          </h3>
-
-          <p>
-            Average Rating
-          </p>
-
+          <span>⭐</span>
+          <h3>{averageRating}</h3>
+          <p>Average Rating</p>
         </div>
 
         <div className="stat-card">
-
-          <span>
-            💬
-          </span>
-
-          <h3>
-            {reviews.length}
-          </h3>
-
-          <p>
-            Total Reviews
-          </p>
-
+          <span>💬</span>
+          <h3>{reviews.length}</h3>
+          <p>Total Reviews</p>
         </div>
 
         <div className="stat-card">
-
-          <span>
-            🎭
-          </span>
-
+          <span>🎭</span>
           <h3>
-            {Math.max(
-              genres.length - 1,
-              0
-            )}
+            {Math.max(genres.length - 1, 0)}
           </h3>
-
-          <p>
-            Genres
-          </p>
-
+          <p>Genres</p>
         </div>
 
       </section>
 
-      {/* ======================================
-          ADD MOVIE
-      ====================================== */}
+      {/* ADD MOVIE */}
 
       {showAddMovie && (
+        <section className="add-movie-section">
 
-        <section
-          className="add-movie-section"
-        >
+          <div className="add-movie-container">
 
-          <div
-            className="add-movie-container"
-          >
-
-            <div
-              className="add-movie-header"
-            >
+            <div className="add-movie-header">
 
               <div>
-
-                <h2>
-                  🎬 Add New Movie
-                </h2>
-
+                <h2>🎬 Add New Movie</h2>
                 <p>
-                  Add a movie directly
-                  to the SQLite database.
+                  Add a movie directly to the
+                  SQLite database.
                 </p>
-
               </div>
 
               <button
@@ -771,41 +551,29 @@ function App() {
               <div className="form-row">
 
                 <div className="form-group">
-
-                  <label>
-                    Movie Title *
-                  </label>
+                  <label>Movie Title *</label>
 
                   <input
                     type="text"
                     placeholder="Avengers Endgame"
                     value={movieTitle}
                     onChange={(e) =>
-                      setMovieTitle(
-                        e.target.value
-                      )
+                      setMovieTitle(e.target.value)
                     }
                   />
-
                 </div>
 
                 <div className="form-group">
-
-                  <label>
-                    Year *
-                  </label>
+                  <label>Year *</label>
 
                   <input
                     type="number"
                     placeholder="2019"
                     value={movieYear}
                     onChange={(e) =>
-                      setMovieYear(
-                        e.target.value
-                      )
+                      setMovieYear(e.target.value)
                     }
                   />
-
                 </div>
 
               </div>
@@ -813,29 +581,20 @@ function App() {
               <div className="form-row">
 
                 <div className="form-group">
-
-                  <label>
-                    Genre *
-                  </label>
+                  <label>Genre *</label>
 
                   <input
                     type="text"
                     placeholder="Action"
                     value={movieGenre}
                     onChange={(e) =>
-                      setMovieGenre(
-                        e.target.value
-                      )
+                      setMovieGenre(e.target.value)
                     }
                   />
-
                 </div>
 
                 <div className="form-group">
-
-                  <label>
-                    Rating / 10
-                  </label>
+                  <label>Rating / 10</label>
 
                   <input
                     type="number"
@@ -845,75 +604,52 @@ function App() {
                     placeholder="8.5"
                     value={movieRating}
                     onChange={(e) =>
-                      setMovieRating(
-                        e.target.value
-                      )
+                      setMovieRating(e.target.value)
                     }
                   />
-
                 </div>
 
               </div>
 
               <div className="form-group">
-
-                <label>
-                  Director *
-                </label>
+                <label>Director *</label>
 
                 <input
                   type="text"
                   placeholder="Anthony Russo"
                   value={movieDirector}
                   onChange={(e) =>
-                    setMovieDirector(
-                      e.target.value
-                    )
+                    setMovieDirector(e.target.value)
                   }
                 />
-
               </div>
 
               <div className="form-group">
-
-                <label>
-                  Poster URL
-                </label>
+                <label>Poster URL</label>
 
                 <input
                   type="url"
                   placeholder="https://example.com/poster.jpg"
                   value={moviePoster}
                   onChange={(e) =>
-                    setMoviePoster(
-                      e.target.value
-                    )
+                    setMoviePoster(e.target.value)
                   }
                 />
-
               </div>
 
               <div className="form-group">
-
-                <label>
-                  Description
-                </label>
+                <label>Description</label>
 
                 <textarea
                   placeholder="Write a short movie description..."
                   value={movieDescription}
                   onChange={(e) =>
-                    setMovieDescription(
-                      e.target.value
-                    )
+                    setMovieDescription(e.target.value)
                   }
                 />
-
               </div>
 
-              <div
-                className="movie-form-actions"
-              >
+              <div className="movie-form-actions">
 
                 <button
                   type="submit"
@@ -926,9 +662,7 @@ function App() {
 
                 <button
                   type="button"
-                  onClick={
-                    resetMovieForm
-                  }
+                  onClick={resetMovieForm}
                 >
                   Clear
                 </button>
@@ -938,33 +672,42 @@ function App() {
             </form>
 
             {movieMessage && (
-
               <p className="movie-message">
                 {movieMessage}
               </p>
-
             )}
 
           </div>
 
         </section>
-
       )}
 
-      {/* ======================================
-          MOVIES
-      ====================================== */}
+      {/* MOVIES */}
 
       <section
         className="movies-section"
         id="movies"
       >
 
-        <h2 className="section-title">
-          🎥 Movies
-        </h2>
+        <div className="section-heading">
 
-        {/* SEARCH / FILTER / SORT */}
+          <div>
+            <span className="section-label">
+              COLLECTION
+            </span>
+
+            <h2 className="section-title">
+              🎥 Movies
+            </h2>
+          </div>
+
+          <span className="movie-count">
+            {filteredMovies.length} movies
+          </span>
+
+        </div>
+
+        {/* SEARCH */}
 
         <div className="movie-controls">
 
@@ -974,45 +717,31 @@ function App() {
             placeholder="🔍 Search movies..."
             value={searchTerm}
             onChange={(e) =>
-              setSearchTerm(
-                e.target.value
-              )
+              setSearchTerm(e.target.value)
             }
           />
 
           <select
             value={genreFilter}
             onChange={(e) =>
-              setGenreFilter(
-                e.target.value
-              )
+              setGenreFilter(e.target.value)
             }
           >
-
             {genres.map((genre) => (
-
-              <option
-                key={genre}
-                value={genre}
-              >
+              <option key={genre} value={genre}>
                 {genre === "All"
                   ? "🎭 All Genres"
                   : genre}
               </option>
-
             ))}
-
           </select>
 
           <select
             value={sortOption}
             onChange={(e) =>
-              setSortOption(
-                e.target.value
-              )
+              setSortOption(e.target.value)
             }
           >
-
             <option value="default">
               ↕️ Sort By
             </option>
@@ -1036,7 +765,6 @@ function App() {
             <option value="title">
               🔤 A → Z
             </option>
-
           </select>
 
         </div>
@@ -1044,56 +772,71 @@ function App() {
         {/* LOADING */}
 
         {loading && (
-
           <div className="loading">
-            Loading movies...
+            <div className="loader"></div>
+            <p>Loading movies...</p>
           </div>
-
         )}
 
         {/* ERROR */}
 
         {error && (
-
           <div className="error">
 
-            <p>
-              Unable to load movies.
-            </p>
+            <div className="error-icon">
+              ⚠️
+            </div>
+
+            <h3>
+              Unable to load movies
+            </h3>
 
             <p>
-              Error: {error}
+              {error}
             </p>
 
           </div>
-
         )}
 
-        {/* NO MOVIES */}
+        {/* EMPTY */}
 
         {!loading &&
           !error &&
           movies.length === 0 && (
+            <div className="empty-state">
 
-            <div className="loading">
-              No movies found in the
-              database.
+              <div>🎬</div>
+
+              <h3>
+                No movies found
+              </h3>
+
+              <p>
+                Add a movie to get started.
+              </p>
+
             </div>
-
           )}
 
-        {/* NO SEARCH RESULTS */}
+        {/* SEARCH EMPTY */}
 
         {!loading &&
           !error &&
           movies.length > 0 &&
           filteredMovies.length === 0 && (
+            <div className="empty-state">
 
-            <div className="loading">
-              🔍 No movies match your
-              search.
+              <div>🔍</div>
+
+              <h3>
+                No movies match
+              </h3>
+
+              <p>
+                Try another search.
+              </p>
+
             </div>
-
           )}
 
         {/* MOVIE GRID */}
@@ -1104,96 +847,34 @@ function App() {
 
             <div className="movies-grid">
 
-              {filteredMovies.map(
-                (movie) => {
+              {filteredMovies.map((movie) => {
 
-                  const movieReviews =
-                    getMovieReviews(
-                      movie.id
-                    );
+                const movieReviews =
+                  getMovieReviews(movie.id);
 
-                  return (
+                return (
+                  <div
+                    className="movie-card"
+                    key={movie.id}
+                  >
 
-                    <div
-                      className="movie-card"
-                      key={movie.id}
-                      onClick={() =>
-                        openMovieDetails(
-                          movie
-                        )
-                      }
-                    >
+                    <div className="poster-container">
 
                       <img
-                        src={getPoster(
-                          movie
-                        )}
+                        src={getPoster(movie)}
                         alt={
                           movie.title ||
                           "Movie poster"
                         }
                       />
 
-                      <div
-                        className="movie-info"
-                      >
-
-                        <h3>
-                          {movie.title}
-                        </h3>
-
-                        <p>
-                          <strong>
-                            Year:
-                          </strong>{" "}
-                          {movie.year ||
-                            "N/A"}
-                        </p>
-
-                        <p>
-                          <strong>
-                            Genre:
-                          </strong>{" "}
-                          {movie.genre ||
-                            "N/A"}
-                        </p>
-
-                        <p className="rating">
-                          ⭐{" "}
-                          {movie.rating ??
-                            "N/A"}{" "}
-                          / 10
-                        </p>
-
-                        <p>
-                          <strong>
-                            Director:
-                          </strong>{" "}
-                          {movie.director ||
-                            "N/A"}
-                        </p>
-
-                        <p>
-                          💬{" "}
-                          {
-                            movieReviews.length
-                          }{" "}
-                          review
-                          {movieReviews.length !==
-                          1
-                            ? "s"
-                            : ""}
-                        </p>
+                      <div className="poster-overlay">
 
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-
-                            openMovieDetails(
-                              movie
-                            );
-                          }}
+                          onClick={() =>
+                            openMovieDetails(movie)
+                          }
                         >
                           👁️ View Details
                         </button>
@@ -1202,27 +883,92 @@ function App() {
 
                     </div>
 
-                  );
-                }
-              )}
+                    <div className="movie-info">
+
+                      <h3>
+                        {movie.title}
+                      </h3>
+
+                      <div className="movie-meta">
+
+                        <span>
+                          📅 {movie.year || "N/A"}
+                        </span>
+
+                        <span>
+                          🎭 {movie.genre || "N/A"}
+                        </span>
+
+                      </div>
+
+                      <div className="movie-rating">
+
+                        ⭐
+
+                        <strong>
+                          {movie.rating ?? "N/A"}
+                        </strong>
+
+                        <small>/ 10</small>
+
+                      </div>
+
+                      <p className="director">
+
+                        🎬 Director:{" "}
+                        {movie.director || "N/A"}
+
+                      </p>
+
+                      <div className="card-footer">
+
+                        <span>
+                          💬 {movieReviews.length}{" "}
+                          review
+                          {movieReviews.length !== 1
+                            ? "s"
+                            : ""}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            openMovieDetails(movie)
+                          }
+                        >
+                          Details →
+                        </button>
+
+                      </div>
+
+                      <button
+                        type="button"
+                        className="write-review-card-button"
+                        onClick={() =>
+                          openReviewForm(movie)
+                        }
+                      >
+                        ✍️ Write a Review
+                      </button>
+
+                    </div>
+
+                  </div>
+                );
+              })}
 
             </div>
-
           )}
 
       </section>
 
-      {/* ======================================
-          MOVIE DETAILS MODAL
-      ====================================== */}
+      {/* MOVIE DETAILS */}
 
       {detailMovie && (
 
         <div
           className="modal-overlay"
-          onClick={
-            closeMovieDetails
-          }
+          onClick={closeMovieDetails}
         >
 
           <div
@@ -1234,129 +980,132 @@ function App() {
 
             <button
               className="close-button"
-              onClick={
-                closeMovieDetails
-              }
+              onClick={closeMovieDetails}
             >
               ✕
             </button>
 
-            <img
-              className="modal-poster"
-              src={getPoster(
-                detailMovie
-              )}
-              alt={
-                detailMovie.title ||
-                "Movie poster"
-              }
-            />
+            <div className="modal-poster-wrapper">
+
+              <img
+                className="modal-poster"
+                src={getPoster(detailMovie)}
+                alt={detailMovie.title}
+              />
+
+            </div>
 
             <div className="modal-content">
+
+              <span className="modal-label">
+                MOVIE DETAILS
+              </span>
 
               <h2>
                 {detailMovie.title}
               </h2>
 
-              <p>
-                <strong>
-                  Year:
-                </strong>{" "}
-                {detailMovie.year ||
-                  "N/A"}
-              </p>
+              <div className="modal-meta">
+
+                <span>
+                  📅 {detailMovie.year || "N/A"}
+                </span>
+
+                <span>
+                  🎭 {detailMovie.genre || "N/A"}
+                </span>
+
+              </div>
+
+              <div className="modal-rating">
+
+                ⭐ {detailMovie.rating ?? "N/A"}
+
+                <span>
+                  {" "} / 10
+                </span>
+
+              </div>
 
               <p>
-                <strong>
-                  Genre:
-                </strong>{" "}
-                {detailMovie.genre ||
-                  "N/A"}
-              </p>
 
-              <p className="rating">
-                ⭐{" "}
-                {detailMovie.rating ??
-                  "N/A"}{" "}
-                / 10
-              </p>
-
-              <p>
                 <strong>
                   Director:
                 </strong>{" "}
-                {detailMovie.director ||
-                  "N/A"}
+
+                {detailMovie.director || "N/A"}
+
               </p>
 
-              <p className="description">
-                {detailMovie.description ||
-                  "No description available."}
-              </p>
-
-              <div
-                className="modal-reviews"
-              >
+              <div className="description">
 
                 <h3>
-                  ⭐ Reviews
+                  Description
+                </h3>
+
+                <p>
+                  {detailMovie.description ||
+                    "No description available."}
+                </p>
+
+              </div>
+
+              <div className="modal-reviews">
+
+                <h3>
+                  💬 Reviews
                 </h3>
 
                 {getMovieReviews(
                   detailMovie.id
                 ).length === 0 ? (
 
-                  <p>
-                    No reviews yet.
+                  <p className="no-reviews">
+                    No reviews yet. Be the first!
                   </p>
 
                 ) : (
 
                   getMovieReviews(
                     detailMovie.id
-                  ).map(
-                    (review) => (
+                  ).map((review) => (
 
-                      <div
-                        className="review-item"
-                        key={review.id}
-                      >
+                    <div
+                      className="review-item"
+                      key={review.id}
+                    >
+
+                      <div className="review-user">
 
                         <strong>
-                          {
-                            review.user_name
-                          }
+                          {review.user_name ||
+                            "Anonymous"}
                         </strong>
 
-                        <p>
-                          ⭐{" "}
-                          {
-                            review.rating
-                          }
-                          /5
-                        </p>
-
-                        <p>
-                          {
-                            review.review_text
-                          }
-                        </p>
+                        <span>
+                          ⭐ {review.rating}/5
+                        </span>
 
                       </div>
 
-                    )
-                  )
+                      <p>
+                        {review.review_text ||
+                          "No review text."}
+                      </p>
+
+                    </div>
+
+                  ))
 
                 )}
 
               </div>
 
               <button
+                type="button"
                 className="review-button"
                 onClick={() =>
-                  openReviewForm(
-                    detailMovie
-                  )
+                  openReviewForm(detailMovie)
                 }
               >
                 ✍️ Write Review
@@ -1367,12 +1116,9 @@ function App() {
           </div>
 
         </div>
-
       )}
 
-      {/* ======================================
-          REVIEW FORM
-      ====================================== */}
+      {/* REVIEW FORM */}
 
       {selectedMovie && (
 
@@ -1381,161 +1127,245 @@ function App() {
           id="review-form"
         >
 
-          <h2>
-            ✍️ Write Review for{" "}
-            {selectedMovie.title}
-          </h2>
+          <div className="review-form-header">
+
+            <span className="section-label">
+              SHARE YOUR OPINION
+            </span>
+
+            <h2>
+              ✍️ Write a Review
+            </h2>
+
+            <p>
+              Reviewing:
+              <strong>
+                {" "}{selectedMovie.title}
+              </strong>
+            </p>
+
+          </div>
 
           <form
             className="review-form"
-            onSubmit={
-              submitReview
-            }
+            onSubmit={submitReview}
           >
 
-            <input
-              type="text"
-              placeholder="Your name"
-              value={reviewerName}
-              onChange={(e) =>
-                setReviewerName(
-                  e.target.value
-                )
-              }
-            />
+            <div className="form-group">
 
-            <select
-              value={rating}
-              onChange={(e) =>
-                setRating(
-                  e.target.value
-                )
-              }
-            >
+              <label>
+                Your Name
+              </label>
 
-              <option value="">
-                Select Rating
-              </option>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={reviewerName}
+                onChange={(e) =>
+                  setReviewerName(e.target.value)
+                }
+              />
 
-              <option value="1">
-                ⭐ 1 / 5
-              </option>
+            </div>
 
-              <option value="2">
-                ⭐⭐ 2 / 5
-              </option>
+            <div className="form-group">
 
-              <option value="3">
-                ⭐⭐⭐ 3 / 5
-              </option>
+              <label>
+                Rating
+              </label>
 
-              <option value="4">
-                ⭐⭐⭐⭐ 4 / 5
-              </option>
+              <select
+                value={rating}
+                onChange={(e) =>
+                  setRating(e.target.value)
+                }
+              >
 
-              <option value="5">
-                ⭐⭐⭐⭐⭐ 5 / 5
-              </option>
+                <option value="">
+                  Select Rating
+                </option>
 
-            </select>
+                <option value="1">
+                  ⭐ 1 / 5
+                </option>
 
-            <textarea
-              placeholder="Write your review..."
-              value={reviewText}
-              onChange={(e) =>
-                setReviewText(
-                  e.target.value
-                )
-              }
-            />
+                <option value="2">
+                  ⭐⭐ 2 / 5
+                </option>
 
-            <button type="submit">
-              ⭐ Submit Review
-            </button>
+                <option value="3">
+                  ⭐⭐⭐ 3 / 5
+                </option>
 
-            <button
-              type="button"
-              onClick={
-                cancelReview
-              }
-            >
-              Cancel
-            </button>
+                <option value="4">
+                  ⭐⭐⭐⭐ 4 / 5
+                </option>
+
+                <option value="5">
+                  ⭐⭐⭐⭐⭐ 5 / 5
+                </option>
+
+              </select>
+
+            </div>
+
+            <div className="form-group">
+
+              <label>
+                Your Review
+              </label>
+
+              <textarea
+                placeholder="Write your review..."
+                value={reviewText}
+                onChange={(e) =>
+                  setReviewText(e.target.value)
+                }
+              />
+
+            </div>
+
+            <div className="form-buttons">
+
+              <button
+                type="submit"
+                className="submit-button"
+              >
+                ⭐ Submit Review
+              </button>
+
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={cancelReview}
+              >
+                Cancel
+              </button>
+
+            </div>
 
           </form>
 
           {reviewMessage && (
-
-            <p>
+            <p
+              className={
+                reviewMessage.startsWith("✅")
+                  ? "success-message"
+                  : "review-error"
+              }
+            >
               {reviewMessage}
             </p>
-
           )}
 
         </section>
-
       )}
 
-      {/* ======================================
-          ALL REVIEWS
-      ====================================== */}
+      {/* ALL REVIEWS */}
 
       <section
         className="reviews-list"
         id="reviews"
       >
 
-        <h2>
-          ⭐ All Reviews
-        </h2>
+        <div className="section-heading">
+
+          <div>
+
+            <span className="section-label">
+              COMMUNITY
+            </span>
+
+            <h2>
+              ⭐ All Reviews
+            </h2>
+
+          </div>
+
+          <span className="review-count">
+            {reviews.length} reviews
+          </span>
+
+        </div>
 
         {reviews.length === 0 ? (
 
-          <p>
-            No reviews yet.
-          </p>
+          <div className="empty-state">
+
+            <div>💬</div>
+
+            <h3>
+              No reviews yet
+            </h3>
+
+            <p>
+              Click "✍️ Write a Review" on
+              any movie to be the first.
+            </p>
+
+          </div>
 
         ) : (
 
-          reviews.map(
-            (review) => (
+          <div className="reviews-grid">
+
+            {reviews.map((review) => (
 
               <div
                 className="review-card"
                 key={review.id}
               >
 
-                <h3>
-                  {review.user_name}
-                </h3>
+                <p className="review-movie">
 
-                <div className="review-rating">
-                  ⭐{" "}
-                  {review.rating}/5
+                  🎬{" "}
+
+                  {review.movie_title ||
+                    `Movie #${review.movie_id}`}
+
+                </p>
+
+                <div className="review-card-top">
+
+                  <h3>
+                    {review.user_name ||
+                      "Anonymous"}
+                  </h3>
+
+                  <div className="review-rating">
+                    ⭐ {review.rating}/5
+                  </div>
+
                 </div>
 
-                <p>
-                  {review.review_text}
+                <p className="review-text">
+                  "{review.review_text}"
                 </p>
 
               </div>
 
-            )
-          )
+            ))}
+
+          </div>
 
         )}
 
       </section>
 
-      {/* ======================================
-          FOOTER
-      ====================================== */}
+      {/* FOOTER */}
 
       <footer className="footer">
 
+        <div className="footer-logo">
+          🎬 Movie Review App
+        </div>
+
         <p>
-          © 2026 Movie Review App |
           React + Express + SQLite
+        </p>
+
+        <p className="copyright">
+          © 2026 Movie Review App
         </p>
 
       </footer>
